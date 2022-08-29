@@ -19,6 +19,8 @@
   "homepage": "https://github.com/SamuelFontes/simplest-discord-shop#readme",
   "dependencies": {
     "discord.js": "^12.5.3",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "sequelize": "^6.21.4",
+    "sqlite3": "^5.0.11"
   }
 }
