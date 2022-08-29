@@ -1,0 +1,24 @@
+{
+  "name": "simplest-discord-shop",
+  "version": "1.0.0",
+  "description": "This is the simplest discord store that I could build. By simplest, I mean the easiest to program. It's not supposed to be scalable or well-designed. This is a cheap and replaceable implementation of a discord bot.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamuelFontes/simplest-discord-shop.git"
+  },
+  "author": "samuguel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SamuelFontes/simplest-discord-shop/issues"
+  },
+  "homepage": "https://github.com/SamuelFontes/simplest-discord-shop#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^16.0.1"
+  }
+}
