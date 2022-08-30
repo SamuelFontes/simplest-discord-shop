@@ -17,6 +17,8 @@ client.on("message", msg =>{
         msg.reply("World");
     } else if(msg.content === "list products"){
         Product.findAll().then( products => msg.reply(JSON.stringify(products)))
+    } else if(msg.content === "show me what you got"){
+        msg.reply(JSON.stringify(msg));
     } else if(msg.content.includes("create product|")){
 
         Product.create({
