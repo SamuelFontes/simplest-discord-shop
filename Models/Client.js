@@ -1,24 +1,20 @@
 const Sequelize = require('sequelize');
 const database = require('../db');
 
-const Product = database.define('Product', {
-    productId: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
+const Client = database.define('Client', {
+    clientId: {
+        type: Sequelize.BIGINT,
         allowNull: false,
         primaryKey: true
     },
-    name: {
+    username: {
         type: Sequelize.STRING,
         allowNull: false
-    },
-    price: {
-        type: Sequelize.DOUBLE
     },
     dateCreated: {
         type: Sequelize.DATE
     },
-    description: Sequelize.STRING
+    contractURL: Sequelize.STRING
 })
 
-module.exports = Product;
+module.exports = Client;

@@ -4,7 +4,9 @@ require('dotenv').config()
 
 // Database
 const database = require('./db');
-const Product = require('./Models/Product');
+const Products = require('./Models/Product');
+const Clients = require('./Models/Client');
+const Orders = require('./Models/Order');
 database.sync();
 
 client.on("ready", () =>{
@@ -16,12 +18,15 @@ client.on("message", msg =>{
     if(msg.content === "Hello"){
         msg.reply("World");
     } else if(msg.content === "list products"){
-        Product.findAll().then( products => msg.reply(JSON.stringify(products)))
+        Products.findAll().then( products => msg.reply(JSON.stringify(products)))
     } else if(msg.content === "show me what you got"){
+        msg.reply(JSON.stringify(msg.member));
+        msg.reply(JSON.stringify(msg.author));
         msg.reply(JSON.stringify(msg));
+        msg.reply("oi")
     } else if(msg.content.includes("create product|")){
 
-        Product.create({
+        Products.create({
             name: msg.content.split("|")[1],
             price: parseFloat(msg.content.split("|")[2]),
             description: msg.content.split("|")[3],
