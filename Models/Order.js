@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const database = require('../db');
 
-const Order = database.define('Order', {
+const Order = database.define('Orders', {
     orderId: {
         type: Sequelize.BIGINT,
         autoIncrement: true,

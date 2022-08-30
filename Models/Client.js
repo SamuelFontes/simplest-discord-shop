@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const database = require('../db');
 
-const Client = database.define('Client', {
+const Client = database.define('Clients', {
     clientId: {
         type: Sequelize.BIGINT,
         allowNull: false,
