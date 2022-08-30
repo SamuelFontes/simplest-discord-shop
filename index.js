@@ -4,7 +4,7 @@ require('dotenv').config()
 
 // Database
 const database = require('./db');
-const Product = require('./product');
+const Product = require('./Models/Product');
 database.sync();
 
 client.on("ready", () =>{

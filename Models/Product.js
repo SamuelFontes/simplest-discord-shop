@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const database = require('./db');
+const database = require('../db');
 
 const Product = database.define('product', {
     productId: {
@@ -14,6 +14,9 @@ const Product = database.define('product', {
     },
     price: {
         type: Sequelize.DOUBLE
+    },
+    dateCreated: {
+        type: Sequelize.DATE
     },
     description: Sequelize.STRING
 })
