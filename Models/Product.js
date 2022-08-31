@@ -3,7 +3,7 @@ const database = require('../db');
 
 const Product = database.define('Products', {
     productId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true

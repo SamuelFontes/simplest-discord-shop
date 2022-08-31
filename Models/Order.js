@@ -16,7 +16,7 @@ const Order = database.define('Orders', {
         }
     },
     productId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         references: {
             model: 'Product',
             key: 'productId'
@@ -28,8 +28,23 @@ const Order = database.define('Orders', {
     totalPrice: {
         type: Sequelize.DOUBLE
     },
-    paidPrice: {
-        type: Sequelize.DOUBLE
+    isPaid:{
+        type: Sequelize.BOOLEAN
+    },
+    datePaid: {
+        type: Sequelize.DATE
+    },
+    isClosed:{
+        type: Sequelize.BOOLEAN
+    },
+    dateClosed: {
+        type: Sequelize.DATE
+    },
+    isCanceled:{
+        type: Sequelize.BOOLEAN
+    },
+    dateCanceled: {
+        type: Sequelize.DATE
     },
 
 })
