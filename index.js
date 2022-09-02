@@ -1,5 +1,8 @@
 // Require the necessary discord.js classes
 const { Client, GatewayIntentBits } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+
+
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -11,6 +14,7 @@ const database = require('./db');
 const Products = require('./Models/Product');
 const Clients = require('./Models/Client');
 const Orders = require('./Models/Order');
+const { DATE } = require('sequelize');
 database.sync();
 
 client.on("ready", () =>{
@@ -42,17 +46,35 @@ client.on("message", msg =>{
 */
 
 client.on('interactionCreate', async interaction => {
-	if (!interaction.isChatInputCommand()) return;
+    try{
+        if (!interaction.isChatInputCommand()) return;
 
-	const { commandName } = interaction;
+        if (interaction.commandName === 'menu') {
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('ticket')
+                        .setLabel('Novo Ticket')
+                        .setStyle(ButtonStyle.Primary),
+                );
 
-	if (commandName === 'ping') {
-		await interaction.reply('Pong!');
-	} else if (commandName === 'server') {
-        await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
-	} else if (commandName === 'user') {
-        await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
-	}
+            await interaction.reply({ content: 'Escolha a ação:', components: [row] });
+        }
+
+    }
+    catch(err){
+        console.log(err);
+    }
+});
+
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isButton()) return;
+    console.log(interaction.customId);
+    interaction.guild.channels.create({ name: interaction.member.user.tag+"-"+Date.now(), reason: 'Novo ticket' })
+    .then(console.log)
+    .catch(console.error);
+
+
 });
 
 // Login to Discord with your client's token

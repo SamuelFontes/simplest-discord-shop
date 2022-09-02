@@ -3,9 +3,7 @@ const { SlashCommandBuilder, Routes } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 
 const commands = [
-	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
-	new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
-	new SlashCommandBuilder().setName('user').setDescription('Replies with user info!'),
+	new SlashCommandBuilder().setName('menu').setDescription('show menu'),
 ]
 	.map(command => command.toJSON());
 
