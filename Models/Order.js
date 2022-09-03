@@ -11,14 +11,15 @@ const Order = database.define('Orders', {
     clientId: {
         type: Sequelize.BIGINT,
         references: {
-            model: 'Client',
+            model: 'Clients',
             key: 'clientId'
         }
     },
     productId: {
         type: Sequelize.BIGINT,
         references: {
-            model: 'Product',
+            model: 'Products',
+            allowNull: true,
             key: 'productId'
         }
     },

@@ -21,32 +21,9 @@ client.on("ready", () =>{
     console.log("Bot working");
 });
 
-/*
-client.on("message", msg =>{
-    // yandere dev style
-    if(msg.content === "Hello"){
-        msg.reply("World");
-    } else if(msg.content === "list products"){
-        Products.findAll().then( products => msg.reply(JSON.stringify(products)))
-    } else if(msg.content === "show me what you got"){
-        msg.reply(JSON.stringify(msg.member));
-        msg.reply(JSON.stringify(msg.author));
-        msg.reply(JSON.stringify(msg));
-        msg.reply("oi")
-    } else if(msg.content.includes("create product|")){
-
-        Products.create({
-            name: msg.content.split("|")[1],
-            price: parseFloat(msg.content.split("|")[2]),
-            description: msg.content.split("|")[3],
-        }).then(res => msg.reply(JSON.stringify(res)))
-
-    }
-});
-*/
-
 client.on('interactionCreate', async interaction => {
     try{
+        console.log(interaction.user)
         if (!interaction.isChatInputCommand()) return;
 
         if (interaction.commandName === 'menu') {
@@ -79,30 +56,7 @@ client.on('interactionCreate', async interaction => {
 
     try{
         if(interaction.customId==="ticket"){
-            var channelName = interaction.member.user.tag+"-"+Date.now();
-            let everyoneRole = interaction.guild.roles.cache.find(r => r.name === '@everyone');
-            interaction.guild.channels.create({ 
-                name: channelName, 
-                reason: 'Novo ticket',
-                permissionOverwrites: [{
-                    id: everyoneRole.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel],
-
-                }, {
-                    id: interaction.user.id,
-                    allow: [PermissionsBitField.Flags.ViewChannel],
-
-                }
-            ],
-            }).then((channel) => {
-                    interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
-            })
-            .catch(err => {
-                console.log(err)
-                interaction.reply({ content: "Erro ao abrir o ticket.", ephemeral: true })
-
-            });
-
+            createTicket(interaction)
         }
         else if(interaction.customId==="hello")
             interaction.reply("Hello")
@@ -115,6 +69,46 @@ client.on('interactionCreate', async interaction => {
 
 
 });
+
+async function createTicket(interaction,productId){
+    // Create user if not exist
+    var client = await Clients.findByPk(interaction.user.id)
+    if(!client)
+        client = await Clients.create({clientId:interaction.user.id,username:interaction.user.username, dateCreated:Date.now()})
+    console.log(client)
+    // if product exists send product
+    // create order
+    var order = await Orders.create({clientId: client.clientId,productId: productId ?? null,dateCreated:Date.now()})
+
+    // create channel
+
+    var channelName = interaction.user.username + "-" + order.orderId;
+    let everyoneRole = interaction.guild.roles.cache.find(r => r.name === '@everyone');
+    interaction.guild.channels.create({ 
+        name: channelName, 
+        reason: 'Novo ticket',
+        permissionOverwrites: [{
+            id: everyoneRole.id,
+            deny: [PermissionsBitField.Flags.ViewChannel],
+
+        }, {
+            id: interaction.user.id,
+            allow: [PermissionsBitField.Flags.ViewChannel],
+
+        }
+    ],
+    }).then((channel) => {
+            interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
+            .then(a => console.log(a))
+            
+    })
+    .catch(err => {
+        console.log(err)
+        interaction.reply({ content: "Erro ao abrir o ticket.", ephemeral: true })
+
+    });
+
+}
 
 // Login to Discord with your client's token
 client.login(process.env.TOKEN);
