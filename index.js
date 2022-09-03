@@ -57,6 +57,13 @@ client.on('interactionCreate', async interaction => {
                         .setLabel('Novo Ticket')
                         .setStyle(ButtonStyle.Primary),
                 );
+            
+            row.addComponents(
+                new ButtonBuilder()
+                    .setCustomId('hello')
+                    .setLabel('Say Hello')
+                    .setStyle(ButtonStyle.Primary),
+            );
 
             await interaction.reply({ content: 'Escolha a ação:', components: [row] });
         }
@@ -70,9 +77,27 @@ client.on('interactionCreate', async interaction => {
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isButton()) return;
     console.log(interaction.customId);
-    interaction.guild.channels.create({ name: interaction.member.user.tag+"-"+Date.now(), reason: 'Novo ticket' })
-    .then(console.log)
-    .catch(console.error);
+    if(interaction.customId==="ticket")
+        var channelName = interaction.member.user.tag+"-"+Date.now();
+        var r = interaction.guild.channels.create({ name: channelName, reason: 'Novo ticket' })
+        .then((channel) => {
+            try{
+                console.log(channel)
+                interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
+            }
+            catch(error){
+                console.log(error)
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            interaction.reply({ content: "Erro ao abrir o ticket.", ephemeral: true })
+
+        });
+    if(interaction.customId==="hello")
+        interaction.reply("Hello")
+    
+
 
 
 });
