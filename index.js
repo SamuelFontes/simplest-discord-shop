@@ -1,6 +1,6 @@
 // Require the necessary discord.js classes
 const { Client, GatewayIntentBits } = require('discord.js');
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionsBitField } = require('discord.js');
 
 
 
@@ -62,7 +62,7 @@ client.on('interactionCreate', async interaction => {
                 new ButtonBuilder()
                     .setCustomId('hello')
                     .setLabel('Say Hello')
-                    .setStyle(ButtonStyle.Primary),
+                    .setStyle(ButtonStyle.Danger),
             );
 
             await interaction.reply({ content: 'Escolha a ação:', components: [row] });
@@ -76,28 +76,42 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isButton()) return;
-    console.log(interaction.customId);
-    if(interaction.customId==="ticket")
-        var channelName = interaction.member.user.tag+"-"+Date.now();
-        var r = interaction.guild.channels.create({ name: channelName, reason: 'Novo ticket' })
-        .then((channel) => {
-            try{
-                console.log(channel)
-                interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
-            }
-            catch(error){
-                console.log(error)
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            interaction.reply({ content: "Erro ao abrir o ticket.", ephemeral: true })
 
-        });
-    if(interaction.customId==="hello")
-        interaction.reply("Hello")
-    
+    try{
+        if(interaction.customId==="ticket"){
+            var channelName = interaction.member.user.tag+"-"+Date.now();
+            let everyoneRole = interaction.guild.roles.cache.find(r => r.name === '@everyone');
+            interaction.guild.channels.create({ 
+                name: channelName, 
+                reason: 'Novo ticket',
+                permissionOverwrites: [{
+                    id: everyoneRole.id,
+                    deny: [PermissionsBitField.Flags.ViewChannel],
 
+                }, {
+                    id: interaction.user.id,
+                    allow: [PermissionsBitField.Flags.ViewChannel],
+
+                }
+            ],
+            }).then((channel) => {
+                    interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
+            })
+            .catch(err => {
+                console.log(err)
+                interaction.reply({ content: "Erro ao abrir o ticket.", ephemeral: true })
+
+            });
+
+        }
+        else if(interaction.customId==="hello")
+            interaction.reply("Hello")
+        
+
+    }
+    catch(error){
+        console.log(error)
+    }
 
 
 });
