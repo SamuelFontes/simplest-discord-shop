@@ -60,6 +60,19 @@ client.on('interactionCreate', async interaction => {
         }
         else if(interaction.customId==="hello")
             interaction.reply("Hello")
+        else if(interaction.customId==="edit_message"){
+            console.log(lastMessageSent)
+            var msg = await interaction.channel.messages.fetch(lastMessageSent) 
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('butao')
+                        .setLabel('butao')
+                        .setStyle(ButtonStyle.Primary),
+                );
+            
+            msg.edit({content:"editado", components: [row]})
+        }
         
 
     }
@@ -69,6 +82,8 @@ client.on('interactionCreate', async interaction => {
 
 
 });
+
+var lastMessageSent
 
 async function createTicket(interaction,productId){
     // Create user if not exist
@@ -99,7 +114,22 @@ async function createTicket(interaction,productId){
     ],
     }).then((channel) => {
             interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
-            .then(a => console.log(a))
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('edit_message')
+                        .setLabel('Teste edicao')
+                        .setStyle(ButtonStyle.Primary),
+                );
+            
+            row.addComponents(
+                new ButtonBuilder()
+                    .setCustomId('hello')
+                    .setLabel('Say Hello')
+                    .setStyle(ButtonStyle.Danger),
+            );
+
+            channel.send({content:`Olá <@${interaction.user.id}> esse é o seu ticket`, components: [row] }).then(msg => lastMessageSent = msg.id)
             
     })
     .catch(err => {
