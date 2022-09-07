@@ -47,6 +47,9 @@ const Order = database.define('Orders', {
     dateCanceled: {
         type: Sequelize.DATE
     },
+    mainMessageId:{
+        type: Sequelize.BIGINT,
+    }
 
 })
 

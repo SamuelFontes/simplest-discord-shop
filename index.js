@@ -15,6 +15,7 @@ const Products = require('./Models/Product');
 const Clients = require('./Models/Client');
 const Orders = require('./Models/Order');
 const { DATE } = require('sequelize');
+const Order = require('./Models/Order');
 database.sync();
 
 client.on("ready", () =>{
@@ -23,7 +24,6 @@ client.on("ready", () =>{
 
 client.on('interactionCreate', async interaction => {
     try{
-        console.log(interaction.user)
         if (!interaction.isChatInputCommand()) return;
 
         if (interaction.commandName === 'menu') {
@@ -60,9 +60,11 @@ client.on('interactionCreate', async interaction => {
         }
         else if(interaction.customId==="hello")
             interaction.reply("Hello")
-        else if(interaction.customId==="edit_message"){
-            console.log(lastMessageSent)
-            var msg = await interaction.channel.messages.fetch(lastMessageSent) 
+        else if(interaction.customId.includes("edit_message")){
+            // Maybe this is not the best way of getting which order is the command commming from but that will do it for now
+            var orderId = interaction.customId.split("-")[1]; // Get the orderId stored in the button 
+            var order = await Orders.findByPk(orderId)
+
             const row = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
@@ -71,7 +73,7 @@ client.on('interactionCreate', async interaction => {
                         .setStyle(ButtonStyle.Primary),
                 );
             
-            msg.edit({content:"editado", components: [row]})
+            interaction.message.edit({content:"editado", components: [row]})
         }
         
 
@@ -83,14 +85,11 @@ client.on('interactionCreate', async interaction => {
 
 });
 
-var lastMessageSent
-
 async function createTicket(interaction,productId){
     // Create user if not exist
     var client = await Clients.findByPk(interaction.user.id)
     if(!client)
         client = await Clients.create({clientId:interaction.user.id,username:interaction.user.username, dateCreated:Date.now()})
-    console.log(client)
     // if product exists send product
     // create order
     var order = await Orders.create({clientId: client.clientId,productId: productId ?? null,dateCreated:Date.now()})
@@ -112,12 +111,12 @@ async function createTicket(interaction,productId){
 
         }
     ],
-    }).then((channel) => {
+    }).then(async (channel) => {
             interaction.reply({ content: "Ticket criado: <#"+ channel+">", ephemeral: true })
             const row = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                        .setCustomId('edit_message')
+                        .setCustomId('edit_message-'+order.orderId)
                         .setLabel('Teste edicao')
                         .setStyle(ButtonStyle.Primary),
                 );
@@ -129,7 +128,13 @@ async function createTicket(interaction,productId){
                     .setStyle(ButtonStyle.Danger),
             );
 
-            channel.send({content:`Olá <@${interaction.user.id}> esse é o seu ticket`, components: [row] }).then(msg => lastMessageSent = msg.id)
+            try{
+                var msg = await channel.send({content:`Olá <@${interaction.user.id}> esse é o seu ticket`, components: [row] });
+                console.log(msg)
+                order.mainMessageId = msg.id;
+                await order.save();
+            }
+            catch(e){console.log(e)}
             
     })
     .catch(err => {
